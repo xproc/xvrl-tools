@@ -21,14 +21,15 @@
         <xsl:apply-templates select="svrl:active-pattern[1]/@document" mode="#current"/>
       </metadata>
       <xsl:for-each-group select="*" group-starting-with="svrl:active-pattern">
-        <xsl:variable name="pattern" as="element(svrl:active-pattern)" select="."/>
-        <xsl:for-each-group select="current-group()[position() gt 1]" group-starting-with="svrl:fired-rule">
-          <xsl:apply-templates select="current-group()/(self::svrl:successful-report | self::svrl:failed-assert)" 
-            mode="#current">
-            <xsl:with-param name="rule" tunnel="yes" as="element(svrl:fired-rule)" select="."/>
-            <xsl:with-param name="pattern" tunnel="yes" as="element(svrl:active-pattern)" select="$pattern"/>
-          </xsl:apply-templates>
-        </xsl:for-each-group>
+        <xsl:if test="exists(current-group()[1]/self::svrl:active-pattern)">
+          <xsl:variable name="pattern" as="element(svrl:active-pattern)" select="."/>
+          <xsl:for-each-group select="current-group()[position() gt 1]" group-starting-with="svrl:fired-rule">
+            <xsl:apply-templates select="current-group()/(self::svrl:successful-report | self::svrl:failed-assert)" mode="#current">
+              <xsl:with-param name="rule" tunnel="yes" as="element(svrl:fired-rule)" select="."/>
+              <xsl:with-param name="pattern" tunnel="yes" as="element(svrl:active-pattern)" select="$pattern"/>
+            </xsl:apply-templates>
+          </xsl:for-each-group>
+        </xsl:if>
       </xsl:for-each-group>
     </report>
   </xsl:template>
