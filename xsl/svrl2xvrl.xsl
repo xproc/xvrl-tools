@@ -8,6 +8,12 @@
   version="2.0"
   exclude-result-prefixes="#all">
 
+  <xsl:template match="@* | node()" mode="human-text">
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@* | node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="/">
     <xsl:apply-templates select=".//svrl:schematron-output" mode="svrl2xvrl"/>
   </xsl:template>
@@ -61,9 +67,9 @@
     </context>
   </xsl:template>
   
-  <xsl:template match="svrl:text | svrl:diagnostic-reference" mode="svrl2xvrl">
+  <xsl:template match="svrl:text | svrl:diagnostic-reference[empty(svrl:text)]" mode="svrl2xvrl">
     <message>
-      <xsl:apply-templates select="(@xml:lang, ../@xml:lang)[1], node()" mode="#current"/>
+      <xsl:apply-templates select="(@xml:lang, ../@xml:lang)[1], node()" mode="human-text"/>
     </message>
   </xsl:template>
   
